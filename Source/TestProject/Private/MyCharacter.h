@@ -43,6 +43,9 @@ public:
 	UInputAction* JumpAction;
 
 	UPROPERTY(EditDefaultsOnly)
+	UInputAction* InteractAction;
+
+	UPROPERTY(EditDefaultsOnly)
 	UInputMappingContext* MappingContext;
 
 private:
@@ -53,5 +56,12 @@ private:
 	void Look(const FInputActionValue& ActionVelue);
 	// jump
 	void Jump(const FInputActionValue& ActionValue);
+
+	void Interact();
+	void InteractCheck();
+
+	FHitResult InteractHitResult;
+	FVector ViewVector;
+	FRotator ViewRotation;
 
 };

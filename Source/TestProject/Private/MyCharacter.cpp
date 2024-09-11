@@ -4,6 +4,7 @@
 #include "MyCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Item.h"
 
 // Sets default values
 AMyCharacter::AMyCharacter()
@@ -25,6 +26,7 @@ void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	InteractCheck();
 }
 
 // Called to bind functionality to input
@@ -46,6 +48,10 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		if (JumpAction)
 		{
 			PlayerEnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AMyCharacter::Jump);
+		}
+		if (InteractAction)
+		{
+			PlayerEnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AMyCharacter::Interact);
 		}
 	}
 
@@ -89,5 +95,23 @@ void AMyCharacter::Jump(const FInputActionValue& ActionValue)
     }
 }
 
+void AMyCharacter::InteractCheck()
+{
+	Cast<APlayerController>(GetController())->GetPlayerViewPoint(ViewVector, ViewRotation);
+	FVector VecDirection = ViewRotation.Vector(); // Get direction of view
+	FVector InteractEnd = ViewVector + VecDirection * 1000; // Set start and end
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+	GetWorld()->LineTraceSingleByChannel(InteractHitResult, ViewVector, InteractEnd, ECollisionChannel::ECC_EngineTraceChannel1, QueryParams);
+}
 
+void AMyCharacter::Interact()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Trying"));
+
+	if (Cast<AItem>(InteractHitResult.GetActor())) // If we hit a AItem class, do stuff
+	{
+		UE_LOG(LogTemp, Warning, TEXT("123"));
+	}
+}
 
