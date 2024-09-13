@@ -5,6 +5,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Item.h"
+#include "Blueprint/UserWidget.h"
 
 // Sets default values
 AMyCharacter::AMyCharacter()
@@ -19,6 +20,9 @@ void AMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	InteractWidget = CreateWidget(Cast<APlayerController>(GetController()), InteractWidgetClass);
+	InteractWidget->AddToViewport(0);
+	InteractWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 // Called every frame
@@ -101,8 +105,16 @@ void AMyCharacter::InteractCheck()
 	FVector VecDirection = ViewRotation.Vector() * 1000.f; // Get direction of view
 	FVector InteractEnd = ViewVector + VecDirection; // Set start and end
 	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(this);
+	QueryParams.AddIgnoredActor(this); // Ignore the player
 	GetWorld()->LineTraceSingleByChannel(InteractHitResult, ViewVector, InteractEnd, ECollisionChannel::ECC_GameTraceChannel1, QueryParams);
+	if (Cast<AItem>(InteractHitResult.GetActor()))
+	{
+		InteractWidget->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		InteractWidget->SetVisibility(ESlateVisibility::Collapsed);
+	}
 }
 
 void AMyCharacter::Interact()

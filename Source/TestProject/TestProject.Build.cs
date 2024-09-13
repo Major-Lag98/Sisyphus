@@ -11,7 +11,7 @@ public class TestProject : ModuleRules
 		PrivateIncludePaths.AddRange(new string[] { "TestProject/Private" });
 		PublicIncludePaths.AddRange(new string[] { "TestProject/Public" });
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

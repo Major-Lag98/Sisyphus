@@ -48,6 +48,11 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	UInputMappingContext* MappingContext;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> InteractWidgetClass;
+	UPROPERTY()
+	UUserWidget* InteractWidget;
+
 private:
 	// functions for locomotion
 	// move the character
