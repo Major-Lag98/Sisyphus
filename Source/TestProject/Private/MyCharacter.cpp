@@ -51,7 +51,7 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		}
 		if (InteractAction)
 		{
-			PlayerEnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AMyCharacter::Interact);
+			PlayerEnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &AMyCharacter::Interact);
 		}
 	}
 
@@ -98,20 +98,30 @@ void AMyCharacter::Jump(const FInputActionValue& ActionValue)
 void AMyCharacter::InteractCheck()
 {
 	Cast<APlayerController>(GetController())->GetPlayerViewPoint(ViewVector, ViewRotation);
-	FVector VecDirection = ViewRotation.Vector(); // Get direction of view
-	FVector InteractEnd = ViewVector + VecDirection * 1000; // Set start and end
+	FVector VecDirection = ViewRotation.Vector() * 1000.f; // Get direction of view
+	FVector InteractEnd = ViewVector + VecDirection; // Set start and end
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
-	GetWorld()->LineTraceSingleByChannel(InteractHitResult, ViewVector, InteractEnd, ECollisionChannel::ECC_EngineTraceChannel1, QueryParams);
+	GetWorld()->LineTraceSingleByChannel(InteractHitResult, ViewVector, InteractEnd, ECollisionChannel::ECC_GameTraceChannel1, QueryParams);
 }
 
 void AMyCharacter::Interact()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Trying"));
+	UE_LOG(LogTemp, Warning, TEXT("Casting line trace..."));
 
-	if (Cast<AItem>(InteractHitResult.GetActor())) // If we hit a AItem class, do stuff
+	// Get the view vector and rotation for line trace debug
+	Cast<APlayerController>(GetController())->GetPlayerViewPoint(ViewVector, ViewRotation);
+	FVector VecDirection = ViewRotation.Vector() * 1000.f; // Get direction of view
+	FVector InteractEnd = ViewVector + VecDirection;
+
+	// Draw a line showing the direction of the view
+	DrawDebugLine(GetWorld(), ViewVector, InteractEnd, FColor::Red, false, 5, 0, 1);
+
+	// If we hit a AItem class, do stuff
+	if (Cast<AItem>(InteractHitResult.GetActor())) 
 	{
-		UE_LOG(LogTemp, Warning, TEXT("123"));
+		// Show the name of item hit as it shows in the outliner
+		UE_LOG(LogTemp, Warning, TEXT("Hit: %s"), *InteractHitResult.GetActor()->GetName());
 	}
 }
 
