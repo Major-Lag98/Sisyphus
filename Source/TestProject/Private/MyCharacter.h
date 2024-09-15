@@ -53,6 +53,9 @@ public:
 	UPROPERTY()
 	UUserWidget* InteractWidget;
 
+	UPROPERTY(EditDefaultsOnly)
+	int ImpulseStrength;
+
 private:
 	// functions for locomotion
 	// move the character
@@ -68,5 +71,4 @@ private:
 	FHitResult InteractHitResult;
 	FVector ViewVector;
 	FRotator ViewRotation;
-
 };

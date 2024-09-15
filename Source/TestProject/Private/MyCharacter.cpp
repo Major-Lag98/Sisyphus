@@ -123,8 +123,8 @@ void AMyCharacter::Interact()
 
 	// Get the view vector and rotation for line trace debug
 	Cast<APlayerController>(GetController())->GetPlayerViewPoint(ViewVector, ViewRotation);
-	FVector VecDirection = ViewRotation.Vector() * 1000.f; // Get direction of view
-	FVector InteractEnd = ViewVector + VecDirection;
+	FVector VecDirection = ViewRotation.Vector(); // Get direction of view
+	FVector InteractEnd = ViewVector + VecDirection * 1000.f;
 
 	// Draw a line showing the direction of the view
 	DrawDebugLine(GetWorld(), ViewVector, InteractEnd, FColor::Red, false, 5, 0, 1);
@@ -132,8 +132,10 @@ void AMyCharacter::Interact()
 	// If we hit a AItem class, do stuff
 	if (Cast<AItem>(InteractHitResult.GetActor())) 
 	{
-		// Show the name of item hit as it shows in the outliner
-		UE_LOG(LogTemp, Warning, TEXT("Hit: %s"), *InteractHitResult.GetActor()->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Hit.."))
+		// using physics push the item in the direction of the view
+		InteractHitResult.GetActor()->FindComponentByClass<UPrimitiveComponent>()->AddImpulse(VecDirection * ImpulseStrength, NAME_None, true);
+
 	}
 }
 
